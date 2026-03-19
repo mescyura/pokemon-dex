@@ -50,11 +50,6 @@ async function loadMore() {
 
 		skeletonWrapper.remove();
 
-		if (newData.length === 0) {
-			hasMore = false;
-			return;
-		}
-
 		if (newData.length < LIMIT) {
 			hasMore = false;
 		}
