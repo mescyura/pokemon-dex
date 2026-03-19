@@ -38,8 +38,8 @@ export async function fetchPokemonDetails(idOrName) {
 	return await response.json();
 }
 
-export async function fetchEvolutionChain(id) {
-	const speciesRes = await fetch(`${BASE_URL}/pokemon-species/${id}`);
+export async function fetchEvolutionChain(speciesUrl) {
+	const speciesRes = await fetch(speciesUrl);
 	const speciesData = await speciesRes.json();
 	const evoRes = await fetch(speciesData.evolution_chain.url);
 	return await evoRes.json();

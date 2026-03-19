@@ -13,7 +13,6 @@ const gallery = document.getElementById('pokemonGallery');
 const searchInput = document.getElementById('searchInput');
 const typeFilter = document.getElementById('typeFilter');
 const modal = document.getElementById('modalOverlay');
-// const modalContent = document.getElementById('modalContent');
 
 async function init() {
 	const types = await api.fetchTypes();
@@ -106,7 +105,6 @@ function render(list) {
 	gallery.innerHTML = list.map(p => ui.createPokemonCard(p)).join('');
 }
 
-// Фільтрація
 typeFilter.addEventListener('change', async () => {
 	const type = typeFilter.value;
 	gallery.innerHTML = '';
@@ -135,19 +133,18 @@ window.addEventListener('scroll', () => {
 	}
 });
 
-// МОДАЛЬНЕ ВІКНО
 gallery.addEventListener('click', async e => {
 	const card = e.target.closest('.pokemon-card');
 	if (!card) return;
 
 	modal.classList.remove('hidden');
-	document.body.style.overflow = 'hidden'; // Забороняємо прокрутку фону
+	document.body.style.overflow = 'hidden';
 	document.getElementById('pokemonDetails').innerHTML =
 		'<p class="text-center p-10">Завантаження...</p>';
 
 	const [pokemon, evolutionData] = await Promise.all([
 		api.fetchPokemonDetails(card.dataset.id),
-		api.fetchEvolutionChain(card.dataset.id),
+		api.fetchEvolutionChain(card.dataset.speciesurl),
 	]);
 	document.getElementById('pokemonDetails').innerHTML = ui.renderDetails(
 		pokemon,
@@ -155,24 +152,19 @@ gallery.addEventListener('click', async e => {
 	);
 });
 
-// ФУНКЦІЯ ЗАКРИТТЯ
 const closeModal = () => {
 	modal.classList.add('hidden');
-	document.body.style.overflow = ''; // Повертаємо прокрутку
+	document.body.style.overflow = '';
 };
 
-// Закриття по кнопці
 document.getElementById('closeModal').onclick = closeModal;
 
-// НОВЕ: Закриття при кліку поза межами контенту
 modal.addEventListener('click', e => {
-	// Якщо клікнули саме по overlay (фон), а не по modalContent чи його дітях
 	if (e.target === modal) {
 		closeModal();
 	}
 });
 
-// НОВЕ: Закриття по клавіші Escape (додатковий UX)
 document.addEventListener('keydown', e => {
 	if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
 		closeModal();
