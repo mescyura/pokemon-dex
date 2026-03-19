@@ -30,7 +30,7 @@ async function loadMore() {
 	if (isLoading || searchInput.value.trim() !== '') return;
 	isLoading = true;
 
-	// Створюємо тимчасовий контейнер для скелетонів пагінації
+	// Створюємо тимчасовий контейнер для скелетонів
 	const skeletonWrapper = document.createElement('div');
 	skeletonWrapper.id = 'pagination-skeletons';
 	skeletonWrapper.className = 'contents';
@@ -47,9 +47,6 @@ async function loadMore() {
 			const slice = typePool.slice(offset, offset + LIMIT);
 			newData = await api.fetchDetailsByUrls(slice);
 		}
-
-		// Видаляємо скелетони безпосередньо перед рендером даних
-		// skeletonWrapper.remove();
 
 		displayedPokemons = [...displayedPokemons, ...newData];
 		render(displayedPokemons);
@@ -139,6 +136,7 @@ gallery.addEventListener('click', async e => {
 
 	modal.classList.remove('hidden');
 	document.body.style.overflow = 'hidden';
+	// Створюємо тимчасовий скелетон картки
 	document.getElementById('pokemonDetails').innerHTML =
 		ui.createSkeletonDetailsCard();
 
