@@ -89,7 +89,7 @@ export function createPokemonCard(pokemon) {
 
 	return `
         <div class="pokemon-card ${bgColor} p-4 rounded-2xl shadow-md cursor-pointer transform transition hover:scale-105" data-id="${pokemon.id}" data-speciesurl="${pokemon.species.url}">
-            <p class="text-right font-bold opacity-50 text-sm">#${String(pokemon.id).padStart(3, '0')}</p>
+            <p class="text-right font-bold opacity-50 text-sm">#${pokemon.id}</p>
             <img class="w-32 h-32 mx-auto drop-shadow-lg" src="${img}" alt="${pokemon.name}">
             <h3 class="text-xl font-bold capitalize text-center mt-2">${pokemon.name}</h3>
 			<div class="flex justify-center gap-1 mt-1 text-xs font-bold opacity-60">
@@ -118,6 +118,7 @@ export function renderDetails(pokemon, evolutionData) {
 	return `
         <div class="flex flex-col md:flex-row gap-8 items-start">
             <div class="w-full md:w-1/3 text-center">
+                <p class="text-left font-bold opacity-50 text-sm">#${pokemon.id}</p>
                 <img class="w-48 h-48 mx-auto" src="${img}">
                 <h2 class="text-3xl font-bold capitalize mt-4">${pokemon.name}</h2>
 				<div class="flex justify-center gap-1 mt-1 text-xs font-bold opacity-60">
