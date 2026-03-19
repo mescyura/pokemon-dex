@@ -148,6 +148,7 @@ gallery.addEventListener('click', async e => {
 		pokemon,
 		evolutionData,
 	);
+	ui.animateStats();
 });
 
 const closeModal = () => {

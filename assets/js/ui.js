@@ -131,18 +131,26 @@ export function renderDetails(pokemon, evolutionData) {
                     ${pokemon.stats
 											.map(
 												s => `
-                        <div class="text-xs font-bold uppercase">${s.stat.name}: ${s.base_stat}</div>
+                        <div class="text-xs font-bold uppercase">
+                            ${s.stat.name}: ${s.base_stat}
+                        </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="${bgColor} h-2 rounded-full" style="width: ${Math.min((s.base_stat / 150) * 100, 100)}%"></div>
+                            <div 
+                                class="stat-bar ${bgColor} h-2 rounded-full transition-all duration-700"
+                                style="width: 0"
+                                data-width="${Math.min((s.base_stat / 150) * 100, 100)}%"
+                            ></div>
                         </div>
                     `,
 											)
 											.join('')}
                 </div>
+
 				<div class="mt-6 text-sm">
                     <h4 class="font-bold mb-1 uppercase text-gray-500 text-xs">Abilities</h4>
                     <p class="capitalize">${pokemon.abilities.map(a => a.ability.name).join(', ')}</p>
                 </div>
+
                 <div class="mt-6 p-3 bg-gray-50 rounded-lg">
                     <h4 class="font-bold text-xs uppercase text-gray-400 mb-1">Evolution Path</h4>
                     <p class="capitalize font-medium text-sm">${evoChain}</p>
@@ -150,4 +158,14 @@ export function renderDetails(pokemon, evolutionData) {
             </div>
         </div>
     `;
+}
+
+export function animateStats() {
+	setTimeout(() => {
+		document.querySelectorAll('.stat-bar').forEach((el, i) => {
+			setTimeout(() => {
+				el.style.width = el.dataset.width;
+			}, i * 100); // stagger ефект (по черзі)
+		});
+	}, 50);
 }
