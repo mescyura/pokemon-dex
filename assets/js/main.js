@@ -15,6 +15,15 @@ const searchInput = document.getElementById('searchInput');
 const typeFilter = document.getElementById('typeFilter');
 const modal = document.getElementById('modalOverlay');
 
+function savePokemonToLocal(id, data) {
+	localStorage.setItem(`pokemon_${id}`, JSON.stringify(data));
+}
+
+function getPokemonFromLocal(id) {
+	const data = localStorage.getItem(`pokemon_${id}`);
+	return data ? JSON.parse(data) : null;
+}
+
 async function init() {
 	const types = await api.fetchTypes();
 	types.forEach(t => {
@@ -110,6 +119,12 @@ function render(list) {
 		return;
 	}
 	gallery.innerHTML = list.map(p => ui.createPokemonCard(p)).join('');
+
+	document.querySelectorAll('.pokemon-card .relative').forEach(container => {
+		console.log('hello');
+
+		ui.handleImageLoad(container);
+	});
 }
 
 typeFilter.addEventListener('change', async () => {
@@ -147,18 +162,30 @@ gallery.addEventListener('click', async e => {
 
 	modal.classList.remove('hidden');
 	document.body.style.overflow = 'hidden';
-	// Створюємо тимчасовий скелетон картки
+
+	// Показуємо скелетон поки чекаємо дані
 	document.getElementById('pokemonDetails').innerHTML =
 		ui.createSkeletonDetailsCard();
 
-	const [pokemon, evolutionData] = await Promise.all([
-		api.fetchPokemonDetails(card.dataset.id),
-		api.fetchEvolutionChain(card.dataset.speciesurl),
-	]);
+	let pokemon = getPokemonFromLocal(card.dataset.id);
+	let evolutionData = getPokemonFromLocal(`evo_${card.dataset.id}`);
+
+	if (!pokemon || !evolutionData) {
+		[pokemon, evolutionData] = await Promise.all([
+			api.fetchPokemonDetails(card.dataset.id),
+			api.fetchEvolutionChain(card.dataset.speciesurl),
+		]);
+
+		savePokemonToLocal(card.dataset.id, pokemon);
+		savePokemonToLocal(`evo_${card.dataset.id}`, evolutionData);
+	}
+
 	document.getElementById('pokemonDetails').innerHTML = ui.renderDetails(
 		pokemon,
 		evolutionData,
 	);
+
+	ui.handleImageLoad(document.querySelector('#pokemonDetails .relative'));
 	ui.animateStats();
 });
 
