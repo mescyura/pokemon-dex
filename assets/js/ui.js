@@ -115,6 +115,15 @@ export function renderDetails(pokemon, evolutionData) {
 
 	const evoChain = parseEvo(evolutionData.chain).join(' → ');
 
+	const STATS_MAX = {
+		hp: 255,
+		attack: 190,
+		defense: 250,
+		'special-attack': 194,
+		'special-defense': 250,
+		speed: 200,
+	};
+
 	return `
         <div class="flex flex-col md:flex-row gap-8 items-start">
             <div class="w-full md:w-1/3 text-center">
@@ -138,7 +147,7 @@ export function renderDetails(pokemon, evolutionData) {
                             <div 
                                 class="stat-bar ${bgColor} h-2 rounded-full transition-all duration-700"
                                 style="width: 0"
-                                data-width="${Math.min((s.base_stat / 150) * 100, 100)}%"
+                                data-width="${Math.min((s.base_stat / STATS_MAX[s.stat.name]) * 100, 100)}%"
                             ></div>
                         </div>
                     `,
@@ -165,7 +174,7 @@ export function animateStats() {
 		document.querySelectorAll('.stat-bar').forEach((el, i) => {
 			setTimeout(() => {
 				el.style.width = el.dataset.width;
-			}, i * 100); // stagger ефект (по черзі)
+			}, i * 100);
 		});
 	}, 50);
 }

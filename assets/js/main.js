@@ -7,6 +7,7 @@ let typePool = [];
 let offset = 0;
 const LIMIT = 20;
 let isLoading = false;
+let hasMore = true;
 let currentMode = 'all';
 
 const gallery = document.getElementById('pokemonGallery');
@@ -27,10 +28,9 @@ async function init() {
 }
 
 async function loadMore() {
-	if (isLoading || searchInput.value.trim() !== '') return;
+	if (isLoading || !hasMore || searchInput.value.trim() !== '') return;
 	isLoading = true;
 
-	// Створюємо тимчасовий контейнер для скелетонів
 	const skeletonWrapper = document.createElement('div');
 	skeletonWrapper.id = 'pagination-skeletons';
 	skeletonWrapper.className = 'contents';
@@ -48,9 +48,24 @@ async function loadMore() {
 			newData = await api.fetchDetailsByUrls(slice);
 		}
 
+		skeletonWrapper.remove();
+
+		if (newData.length === 0) {
+			hasMore = false;
+			return;
+		}
+
+		if (newData.length < LIMIT) {
+			hasMore = false;
+		}
+
 		displayedPokemons = [...displayedPokemons, ...newData];
 		render(displayedPokemons);
 		offset += LIMIT;
+
+		if (currentMode === 'type' && offset >= typePool.length) {
+			hasMore = false;
+		}
 	} catch (error) {
 		skeletonWrapper.remove();
 		console.error('Помилка завантаження:', error);
@@ -107,6 +122,7 @@ typeFilter.addEventListener('change', async () => {
 	gallery.innerHTML = '';
 	displayedPokemons = [];
 	offset = 0;
+	hasMore = true;
 	searchInput.value = '';
 
 	if (type === 'all') {
@@ -159,9 +175,7 @@ const closeModal = () => {
 document.getElementById('closeModal').onclick = closeModal;
 
 modal.addEventListener('click', e => {
-	if (e.target === modal) {
-		closeModal();
-	}
+	if (e.target === modal) closeModal();
 });
 
 document.addEventListener('keydown', e => {
