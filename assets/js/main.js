@@ -49,7 +49,7 @@ async function loadMore() {
 		}
 
 		// Видаляємо скелетони безпосередньо перед рендером даних
-		skeletonWrapper.remove();
+		// skeletonWrapper.remove();
 
 		displayedPokemons = [...displayedPokemons, ...newData];
 		render(displayedPokemons);
@@ -140,7 +140,7 @@ gallery.addEventListener('click', async e => {
 	modal.classList.remove('hidden');
 	document.body.style.overflow = 'hidden';
 	document.getElementById('pokemonDetails').innerHTML =
-		'<p class="text-center p-10">Завантаження...</p>';
+		ui.createSkeletonDetailsCard();
 
 	const [pokemon, evolutionData] = await Promise.all([
 		api.fetchPokemonDetails(card.dataset.id),
